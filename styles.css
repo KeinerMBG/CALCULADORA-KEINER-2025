@@ -1,0 +1,213 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: #000;
+    color: #fff;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.calculator {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.display {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 20px;
+    position: relative;
+    min-height: 120px;
+}
+
+.result {
+    font-size: 64px;
+    font-weight: 300;
+    margin-bottom: 10px;
+    text-align: right;
+    width: 100%;
+    transition: all 0.3s ease;
+    transform-origin: right;
+}
+
+.result.smaller {
+    font-size: 48px;
+}
+
+.result.smallest {
+    font-size: 36px;
+}
+
+.history {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.6);
+    text-align: right;
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 12px;
+    padding: 16px;
+}
+
+.btn {
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:active {
+    transform: scale(0.93);
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+}
+
+.btn:active::after {
+    animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        width: 0;
+        height: 0;
+        opacity: 1;
+    }
+    100% {
+        width: 200%;
+        height: 200%;
+        opacity: 0;
+    }
+}
+
+.operation {
+    background-color: #FF9F0A;
+    color: white;
+}
+
+.operation.active {
+    background-color: white;
+    color: #FF9F0A;
+}
+
+.number, .decimal {
+    background-color: #333333;
+    color: white;
+}
+
+.function {
+    background-color: #A5A5A5;
+    color: black;
+}
+
+.zero {
+    grid-column: span 2;
+    border-radius: 40px;
+    aspect-ratio: auto;
+    justify-content: flex-start;
+    padding-left: 32px;
+}
+
+/* Animation classes */
+.btn-pop {
+    animation: pop 0.2s ease-out;
+}
+
+@keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-up {
+    animation: slideUp 0.3s forwards;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* iOS 18 Glass Effect */
+.glass-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+.btn:active .glass-effect {
+    opacity: 0.8;
+}
+
+/* Dark mode media query */
+@media (prefers-color-scheme: light) {
+    body {
+        background-color: #F2F2F7;
+        color: #000;
+    }
+    
+    .number, .decimal {
+        background-color: #E1E1E6;
+        color: #000;
+    }
+    
+    .function {
+        background-color: #D1D1D6;
+        color: #000;
+    }
+    
+    .history {
+        color: rgba(0, 0, 0, 0.6);
+    }
+}

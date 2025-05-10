@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#000000">
+    <title>iOS 18 Calculator</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="calculator">
+        <div class="display">
+            <div class="history" id="history"></div>
+            <div class="result" id="result">0</div>
+        </div>
+        <div class="buttons">
+            <button class="btn function" data-type="clear">
+                AC
+                <div class="glass-effect"></div>
+            </button>
+            <button class="btn function" data-type="toggle">
+                +/-
+                <div class="glass-effect"></div>
+            </button>
+            <button class="btn function" data-type="percent">
+                %
+                <div class="glass-effect"></div>
+            </button>
+            <button class="btn operation" data-type="operation" data-operation="divide">
+                ÷
+                <div class="glass-effect"></div>
+            </button>
+            
+            <button class="btn number" data-type="number" data-number="7">
+                7
+                <div class="glass-effect"></div>
+            </button>
+            <button class="btn number" data-type="number" data-number="8">
+                8
+                <div class="glass-effect"></div>
+            </button>
+            <button class="btn number" data-type="number" data-number="9">
+                9
+                <div class="glass-effect"></div>
+            </button>
+            <button class="btn operation" data-type="operation" data-operation="multiply">
+                ×
+                <div class="glass-effect"></div>
+            </button>
+            
+            <button class="btn number" data-type="number" data-number="4">
+                4
+                <div class="glass-effect"></div>
+            </button>
+            <button class="btn number" data-type="number" data-number="5">
+                5
+                <div class="glass-effect"></div>
+            </button>
+            <button class="btn number" data-type="number" data-number="6">
+                6
+                <div class="glass-effect"></div>
+            </button>
+            <button class="btn operation" data-type="operation" data-operation="subtract">
+                −
+                <div class="glass-effect"></div>
+            </button>
+            
+            <button class="btn number" data-type="number" data-number="1">
+                1
+                <div class="glass-effect"></div>
+            </button>
+            <button class="btn number" data-type="number" data-number="2">
+                2
+                <div class="glass-effect"></div>
+            </button>
+            <button class="btn number" data-type="number" data-number="3">
+                3
+                <div class="glass-effect"></div>
+            </button>
+            <button class="btn operation" data-type="operation" data-operation="add">
+                +
+                <div class="glass-effect"></div>
+            </button>
+            
+            <button class="btn number zero" data-type="number" data-number="0">
+                0
+                <div class="glass-effect"></div>
+            </button>
+            <button class="btn decimal" data-type="decimal">
+                .
+                <div class="glass-effect"></div>
+            </button>
+            <button class="btn operation" data-type="equals">
+                =
+                <div class="glass-effect"></div>
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
