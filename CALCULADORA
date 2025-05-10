@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#333333">
+    <title>Calculadora Avanzada PWA</title>
+    <link rel="manifest" href="#manifest">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .calculadora {
+            background-color: #333;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            width: 320px;
+            max-width: 90vw;
+        }
+        
+        .pantalla {
+            background-color: #eee;
+            border-radius: 5px;
+            color: #333;
+            font-family: 'Courier New', monospace;
+            font-size: 24px;
+            height: 60px;
+            line-height: 60px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            padding: 0 10px;
+            text-align: right;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .historial {
+            background-color: #ddd;
+            border-radius: 5px;
+            color: #666;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            height: 30px;
+            line-height: 30px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            padding: 0 10px;
+            text-align: right;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .botones {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        
+        button {
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            height: 50px;
+            transition: background-color 0.2s;
+        }
+        
+        button:active {
+            transform: scale(0.95);
+        }
+        
+        .numero {
+            background-color: #4d4d4d;
+            color: white;
+        }
+        
+        .numero:hover {
+            background-color: #5a5a5a;
+        }
+        
+        .operacion {
+            background-color: #ff9500;
+            color: white;
+        }
+        
+        .operacion:hover {
+            background-color: #ffaa33;
+        }
+        
+        .funcion {
+            background-color: #2d2d2d;
+            color: white;
+        }
+        
+        .funcion:hover {
+            background-color: #3a3a3a;
+        }
+        
+        .igual {
+            background-color: #2196F3;
+            color: white;
+        }
+        
+        .igual:hover {
+            background-color: #0d8bf2;
+        }
+        
+        .span-2 {
+            grid-column: span 2;
+        }
+        
+        .install-button {
+            display: none;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        
+        .install-button.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <button id="installButton" class="install-button">Instalar App</button>
+    
+    <div class="calculadora">
+        <div class="historial" id="historial"></div>
+        <div class="pantalla" id="pantalla">0</div>
+        <div class="botones">
+            <button class="funcion" onclick="limpiar()">AC</button>
+            <button class="funcion" onclick="cambiarSigno()">+/-</button>
+            <button class="funcion" onclick="porcentaje()">%</button>
+            <button class="operacion" onclick="operador('/')">÷</button>
+            
+            <button class="numero" onclick="agregarNumero('7')">7</button>
+            <button class="numero" onclick="agregarNumero('8')">8</button>
+            <button class="numero" onclick="agregarNumero('9')">9</button>
+            <button class="operacion" onclick="operador('*')">×</button>
+            
+            <button class="numero" onclick="agregarNumero('4')">4</button>
+            <button class="numero" onclick="agregarNumero('5')">5</button>
+            <button class="numero" onclick="agregarNumero('6')">6</button>
+            <button class="operacion" onclick="operador('-')">−</button>
+            
+            <button class="numero" onclick="agregarNumero('1')">1</button>
+            <button class="numero" onclick="agregarNumero('2')">2</button>
+            <button class="numero" onclick="agregarNumero('3')">3</button>
+            <button class="operacion" onclick="operador('+')">+</button>
+            
+            <button class="numero span-2" onclick="agregarNumero('0')">0</button>
+            <button class="numero" onclick="agregarDecimal()">.</button>
+            <button class="igual" onclick="calcular()">=</button>
+            
+            <button class="funcion" onclick="raizCuadrada()">√</button>
+            <button class="funcion" onclick="potencia()">x²</button>
+            <button class="funcion" onclick="funcionSeno()">sin</button>
+            <button class="funcion" onclick="funcionCoseno()">cos</button>
+            
+            <button class="funcion" onclick="funcionTangente()">tan</button>
+            <button class="funcion" onclick="logaritmo()">log</button>
+            <button class="funcion" onclick="logaritmoNatural()">ln</button>
+            <button class="funcion" onclick="pi()">π</button>
+        </div>
+    </div>
+
+    <script>
+        // Variables para el funcionamiento de la calculadora
+        let valorActual = '0';
+        let valorAnterior = '';
+        let operacionPendiente = null;
+        let borrarPantallaEnSiguienteNumero = false;
+        let pantalla = document.getElementById('pantalla');
+        let historial = document.getElementById('historial');
+        
+        // Actualizar la pantalla
+        function actualizarPantalla() {
+            pantalla.textContent = valorActual;
+        }
+        
+        // Agregar un número a la pantalla
+        function agregarNumero(numero) {
+            if (valorActual === '0' || borrarPantallaEnSiguienteNumero) {
+                valorActual = numero;
+                borrarPantallaEnSiguienteNumero = false;
+            } else {
+                valorActual += numero;
+            }
+            actualizarPantalla();
+        }
+        
+        // Agregar punto decimal
+        function agregarDecimal() {
+            if (borrarPantallaEnSiguienteNumero) {
+                valorActual = '0.';
+                borrarPantallaEnSiguienteNumero = false;
+            } else if (valorActual.indexOf('.') === -1) {
+                valorActual += '.';
+            }
+            actualizarPantalla();
+        }
+        
+        // Limpiar la calculadora
+        function limpiar() {
+            valorActual = '0';
+            valorAnterior = '';
+            operacionPendiente = null;
+            historial.textContent = '';
+            actualizarPantalla();
+        }
+        
+        // Cambiar el signo del número
+        function cambiarSigno() {
+            valorActual = String(parseFloat(valorActual) * -1);
+            actualizarPantalla();
+        }
+        
+        // Calcular porcentaje
+        function porcentaje() {
+            valorActual = String(parseFloat(valorActual) / 100);
+            actualizarPantalla();
+        }
+        
+        // Procesar operador
+        function operador(op) {
+            const valor = parseFloat(valorActual);
+            
+            if (operacionPendiente !== null) {
+                calcular();
+            }
+            
+            valorAnterior = valorActual;
+            operacionPendiente = op;
+            borrarPantallaEnSiguienteNumero = true;
+            historial.textContent = valorAnterior + ' ' + op;
+        }
+        
+        // Calcular el resultado
+        function calcular() {
+            if (operacionPendiente === null) return;
+            
+            const valor1 = parseFloat(valorAnterior);
+            const valor2 = parseFloat(valorActual);
+            let resultado;
+            
+            switch(operacionPendiente) {
+                case '+':
+                    resultado = valor1 + valor2;
+                    break;
+                case '-':
+                    resultado = valor1 - valor2;
+                    break;
+                case '*':
+                    resultado = valor1 * valor2;
+                    break;
+                case '/':
+                    resultado = valor1 / valor2;
+                    break;
+            }
+            
+            historial.textContent += ' ' + valorActual + ' = ';
+            valorActual = String(resultado);
+            operacionPendiente = null;
+            actualizarPantalla();
+        }
+        
+        // Funciones científicas
+        function raizCuadrada() {
+            const valor = parseFloat(valorActual);
+            historial.textContent = '√(' + valorActual + ')';
+            valorActual = String(Math.sqrt(valor));
+            actualizarPantalla();
+        }
+        
+        function potencia() {
+            const valor = parseFloat(valorActual);
+            historial.textContent = '(' + valorActual + ')²';
+            valorActual = String(Math.pow(valor, 2));
+            actualizarPantalla();
+        }
+        
+        function funcionSeno() {
+            const valor = parseFloat(valorActual);
+            historial.textContent = 'sin(' + valorActual + ')';
+            valorActual = String(Math.sin(valor * Math.PI / 180));
+            actualizarPantalla();
+        }
+        
+        function funcionCoseno() {
+            const valor = parseFloat(valorActual);
+            historial.textContent = 'cos(' + valorActual + ')';
+            valorActual = String(Math.cos(valor * Math.PI / 180));
+            actualizarPantalla();
+        }
+        
+        function funcionTangente() {
+            const valor = parseFloat(valorActual);
+            historial.textContent = 'tan(' + valorActual + ')';
+            valorActual = String(Math.tan(valor * Math.PI / 180));
+            actualizarPantalla();
+        }
+        
+        function logaritmo() {
+            const valor = parseFloat(valorActual);
+            historial.textContent = 'log(' + valorActual + ')';
+            valorActual = String(Math.log10(valor));
+            actualizarPantalla();
+        }
+        
+        function logaritmoNatural() {
+            const valor = parseFloat(valorActual);
+            historial.textContent = 'ln(' + valorActual + ')';
+            valorActual = String(Math.log(valor));
+            actualizarPantalla();
+        }
+        
+        function pi() {
+            historial.textContent = 'π';
+            valorActual = String(Math.PI);
+            actualizarPantalla();
+        }
+        
+        // Inicialización
+        actualizarPantalla();
+        
+        // Código para PWA
+        // Service Worker para la funcionalidad offline
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(registration => {
+                    console.log('ServiceWorker registrado con éxito:', registration.scope);
+                }).catch(error => {
+                    console.log('Registro de ServiceWorker fallido:', error);
+                });
+            });
+        }
+        
+        // Lógica para la instalación de la PWA
+        let deferredPrompt;
+        const installButton = document.getElementById('installButton');
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installButton.classList.add('show');
+        });
+        
+        installButton.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response: ${outcome}`);
+                deferredPrompt = null;
+                installButton.classList.remove('show');
+            }
+        });
+        
+        window.addEventListener('appinstalled', () => {
+            console.log('App instalada correctamente');
+            installButton.classList.remove('show');
+        });
+    </script>
+    
+    <!-- Datos inline para evitar solicitudes de red -->
+    <script id="manifest" type="application/manifest+json">
+        {
+            "name": "Calculadora Avanzada",
+            "short_name": "Calculadora",
+            "description": "Una calculadora científica avanzada en formato PWA",
+            "start_url": ".",
+            "display": "standalone",
+            "background_color": "#333333",
+            "theme_color": "#333333",
+            "icons": [
+                {
+                    "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23333'/%3E%3Ctext x='256' y='256' font-family='Arial' font-size='200' text-anchor='middle' dominant-baseline='middle' fill='white'%3E≡%3C/text%3E%3C/svg%3E",
+                    "sizes": "512x512",
+                    "type": "image/svg+xml",
+                    "purpose": "any maskable"
+                }
+            ]
+        }
+    </script>
+    
+    <!-- Service Worker inline -->
+    <script id="sw" type="text/javascript">
+        // Este script se extraerá y guardará como sw.js en la inicialización
+        const CACHE_NAME = 'calculadora-avanzada-v1';
+        const urlsToCache = [
+            './',
+            './index.html'
+        ];
+        
+        self.addEventListener('install', event => {
+            event.waitUntil(
+                caches.open(CACHE_NAME)
+                    .then(cache => {
+                        return cache.addAll(urlsToCache);
+                    })
+            );
+        });
+        
+        self.addEventListener('fetch', event => {
+            event.respondWith(
+                caches.match(event.request)
+                    .then(response => {
+                        if (response) {
+                            return response;
+                        }
+                        return fetch(event.request);
+                    })
+            );
+        });
+        
+        self.addEventListener('activate', event => {
+            const cacheWh
